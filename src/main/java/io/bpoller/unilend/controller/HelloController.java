@@ -15,4 +15,9 @@ public class HelloController {
     public ResponseEntity<SayHi> sayHello() {
         return new ResponseEntity<>(new SayHi("Hello World"), OK);
     }
+
+    @RequestMapping(path = "/", method = GET)
+    public ResponseEntity<String> index() {
+        return new ResponseEntity<>("Up and running", OK);
+    }
 }

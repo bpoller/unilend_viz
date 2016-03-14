@@ -1,13 +1,12 @@
-package io.nowave.api;
+package io.bpoller.unilend;
 
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
-public class NowaveApp {
+public class UnilendViz {
     public static void main(String[] args) {
-        SpringApplication.run(NowaveApp.class, args);
-
+        SpringApplication.run(UnilendViz.class, args);
     }
 }

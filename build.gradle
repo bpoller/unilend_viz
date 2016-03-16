@@ -16,6 +16,7 @@ jar {
 
 repositories {
     mavenCentral()
+    maven { url 'http://repo.spring.io/snapshot' }
 }
 
 sourceCompatibility = 1.8
@@ -23,9 +24,11 @@ targetCompatibility = 1.8
 
 
 dependencies {
-    compile("org.springframework.boot:spring-boot-starter-web")
-    compile("org.springframework.boot:spring-boot-starter-actuator")
-    testCompile("junit:junit")
+    compile "org.springframework.boot:spring-boot-starter-web"
+    compile "org.springframework.boot:spring-boot-starter-actuator"
+    compile "io.projectreactor:reactor-core:2.5.0.M2"
+    compile 'org.jsoup:jsoup:1.8.3'
+    testCompile "junit:junit"
 }
 
 task wrapper(type: Wrapper) {

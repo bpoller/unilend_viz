@@ -12,15 +12,15 @@ import java.util.concurrent.atomic.AtomicInteger;
 import static org.slf4j.LoggerFactory.getLogger;
 
 @Service
-public class TriggerService {
+public class Trigger {
 
     private Logger logger = getLogger(getClass());
     private AtomicInteger i = new AtomicInteger(0);
     private Subscriber<Integer> subscriber;
 
     @Autowired
-    public TriggerService(Subscriber<Integer> subscriber) {
-        this.subscriber = subscriber;
+    public Trigger(Subscriber<Integer> triggerTopic) {
+        this.subscriber = triggerTopic;
     }
 
     @Scheduled(fixedRate = 5000)

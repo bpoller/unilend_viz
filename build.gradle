@@ -27,8 +27,10 @@ dependencies {
     compile "org.springframework.boot:spring-boot-starter-web"
     compile "org.springframework.boot:spring-boot-starter-actuator"
     compile "io.projectreactor:reactor-core:2.5.0.M2"
+    compile "com.fasterxml.jackson.core:jackson-databind:2.6.3"
     compile 'org.jsoup:jsoup:1.8.3'
     testCompile "junit:junit"
+    testCompile 'org.mockito:mockito-core:2.0.43-beta'
 }
 
 task wrapper(type: Wrapper) {

@@ -1,9 +1,14 @@
 package io.bpoller.unilend;
 
-import io.bpoller.unilend.model.BidHistory;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.mongodb.reactivestreams.client.MongoClients;
+import com.mongodb.reactivestreams.client.MongoDatabase;
+import io.bpoller.unilend.model.Bid;
 import org.reactivestreams.Processor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder;
 import org.springframework.scheduling.annotation.EnableScheduling;
 
 import static reactor.core.publisher.TopicProcessor.create;
@@ -11,6 +16,10 @@ import static reactor.core.publisher.TopicProcessor.create;
 @Configuration
 @EnableScheduling
 public class AppConfiguration {
+
+    @Value("${mongo.connectionurl}")
+    private String mongoConnectionURL;
+
 
     @Bean
     public Processor<Integer, Integer> triggerTopic() {
@@ -23,7 +32,17 @@ public class AppConfiguration {
     }
 
     @Bean
-    public Processor<BidHistory, BidHistory> bidHistoryTopic() {
-        return create("bidHistoryTopic");
+    public Processor<Bid, Bid> bidTopic() {
+        return create("bidTopic");
+    }
+
+    @Bean
+    ObjectMapper objectMapper() {
+        return Jackson2ObjectMapperBuilder.json().build();
+    }
+
+    @Bean
+    MongoDatabase mongoDatabase() {
+        return MongoClients.create(mongoConnectionURL).getDatabase("unilend");
     }
 }

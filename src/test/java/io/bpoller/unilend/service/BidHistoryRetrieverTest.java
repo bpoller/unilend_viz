@@ -4,7 +4,6 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import io.bpoller.unilend.model.Bid;
-import io.bpoller.unilend.model.BidHistory;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
@@ -22,7 +21,7 @@ public class BidHistoryRetrieverTest {
     private Publisher<String> publisher;
 
     @Mock
-    private Subscriber<BidHistory> subscriber;
+    private Subscriber<Bid> subscriber;
 
     private BidHistoryRetriever bidHistoryRetriever;
 
@@ -38,7 +37,7 @@ public class BidHistoryRetrieverTest {
 
     @Test
     public void shouldRetrieveIds() throws IOException, InterruptedException {
-        System.out.println(toJSON(bidHistoryRetriever.retrieveHistory("28802").reduceByInterestRate()));
+        bidHistoryRetriever.retrieveHistory("28802").consume((bid)-> System.out.println(toJSON(bid)));
     }
 
     private String toJSON(Object bid) {

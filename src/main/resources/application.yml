@@ -1,0 +1,2 @@
+mongo:
+  connectionurl: mongodb://bert:toto@ds025439.mlab.com:25439/unilend

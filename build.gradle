@@ -27,6 +27,7 @@ dependencies {
     compile "org.springframework.boot:spring-boot-starter-web"
     compile "org.springframework.boot:spring-boot-starter-actuator"
     compile "io.projectreactor:reactor-core:2.5.0.M2"
+    compile "org.mongodb:mongodb-driver-reactivestreams:1.2.0"
     compile "com.fasterxml.jackson.core:jackson-databind:2.6.3"
     compile 'org.jsoup:jsoup:1.8.3'
     testCompile "junit:junit"

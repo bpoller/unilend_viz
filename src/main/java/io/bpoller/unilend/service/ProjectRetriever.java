@@ -44,8 +44,4 @@ public class ProjectRetriever {
         Elements projectIds = doc.select("tr.unProjet>td>strong:not(:contains(Terminé))");
         return projectIds.stream().map(Element::id).map(id -> id.replaceFirst("val", ""));
     }
-
-    Stream<String> fake() throws IOException {
-        return IntStream.range(1, 1000).boxed().map(String::valueOf);
-    }
 }

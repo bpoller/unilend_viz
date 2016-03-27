@@ -3,7 +3,7 @@ package io.bpoller.unilend.service;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import io.bpoller.unilend.model.BidHistory;
+import io.bpoller.unilend.model.Bid;
 import org.reactivestreams.Publisher;
 import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,13 +20,13 @@ public class DisplayDude {
     private ObjectMapper objectMapper;
 
     @Autowired
-    public DisplayDude(Publisher<BidHistory> bidHistoryTopic) {
-        this.objectMapper = new ObjectMapper();
-        Flux.from(bidHistoryTopic).consume(this::show);
+    public DisplayDude(Publisher<Bid> bidTopic, ObjectMapper objectMapper) {
+        this.objectMapper = objectMapper;
+        Flux.from(bidTopic).consume(this::show);
     }
 
-    private void show(BidHistory bidHistory) {
-        logger.info("Ok we got it to display {}", toJSON(bidHistory.reduceByInterestRate()));
+    private void show(Bid bid) {
+        logger.info("Ok we got it to display {}", toJSON(bid));
     }
 
 

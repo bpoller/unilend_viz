@@ -28,4 +28,5 @@ public class Trigger {
         logger.info("Scheduler triggered !");
         subscriber.onNext(i.incrementAndGet());
     }
+
 }

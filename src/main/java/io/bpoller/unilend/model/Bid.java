@@ -1,5 +1,7 @@
 package io.bpoller.unilend.model;
 
+import java.util.Date;
+
 public class Bid {
 
     private String sequence;
@@ -8,16 +10,16 @@ public class Bid {
 
     private String interest;
 
-    private String projectId;
+    private Date timestamp;
 
     private Bid() {
     }
 
-    public Bid(String projectId, String sequence, int amount, String interest) {
+    public Bid(String sequence, int amount, String interest, Date timestamp) {
         this.sequence = sequence;
         this.amount = amount;
         this.interest = interest;
-        this.projectId = projectId;
+        this.timestamp = timestamp;
     }
 
     public String getSequence() {
@@ -32,7 +34,19 @@ public class Bid {
         return interest;
     }
 
-    public String getProjectId() {
-        return projectId;
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Bid)) return false;
+
+        Bid bid = (Bid) o;
+
+        return getSequence().equals(bid.getSequence());
+
+    }
+
+    @Override
+    public int hashCode() {
+        return getSequence().hashCode();
     }
 }

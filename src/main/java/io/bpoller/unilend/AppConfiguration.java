@@ -3,7 +3,7 @@ package io.bpoller.unilend;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mongodb.reactivestreams.client.MongoClients;
 import com.mongodb.reactivestreams.client.MongoDatabase;
-import io.bpoller.unilend.model.Bid;
+import io.bpoller.unilend.model.BidHistory;
 import org.reactivestreams.Processor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
@@ -32,8 +32,8 @@ public class AppConfiguration {
     }
 
     @Bean
-    public Processor<Bid, Bid> bidTopic() {
-        return create("bidTopic");
+    public Processor<BidHistory, BidHistory> bidTopic() {
+        return create("bidHistoryTopic");
     }
 
     @Bean

@@ -1,7 +1,7 @@
 package io.bpoller.unilend.model;
 
 
-import java.util.List;
+import java.util.Date;
 import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -12,9 +12,12 @@ public class BidHistory {
 
     private Set<Bid> bids;
 
-    public BidHistory(String projectId, Set<Bid> bids) {
+    private Date timestamp;
+
+    public BidHistory(String projectId, Set<Bid> bids, Date timestamp) {
         this.projectId = projectId;
         this.bids = bids;
+        this.timestamp = timestamp;
     }
 
     public Set<Bid> getBids() {
@@ -45,15 +48,5 @@ public class BidHistory {
     @Override
     public int hashCode() {
         return getProjectId().hashCode();
-    }
-
-    public static int orderAscending(String left, String right) {
-
-        float leftF = Float.parseFloat(left);
-        float rightF = Float.parseFloat(right);
-
-
-
-        return 0;
     }
 }

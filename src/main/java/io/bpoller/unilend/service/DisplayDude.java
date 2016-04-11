@@ -1,14 +1,12 @@
 package io.bpoller.unilend.service;
 
-
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.bpoller.unilend.model.BidHistory;
-import org.reactivestreams.Publisher;
 import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import reactor.core.publisher.Flux;
+import reactor.core.tuple.Tuple;
 
 import static org.slf4j.LoggerFactory.getLogger;
 
@@ -20,15 +18,30 @@ public class DisplayDude {
     private ObjectMapper objectMapper;
 
     @Autowired
-    public DisplayDude(Publisher<BidHistory> bidTopic, ObjectMapper objectMapper) {
+    public DisplayDude(ObjectMapper objectMapper) {
         this.objectMapper = objectMapper;
-        Flux.from(bidTopic).consume(this::show);
     }
 
-    private void show(BidHistory bidHistory) {
-        logger.info("Ok we got it to display {}", toJSON(bidHistory.reduceByInterestRate()));
+    void show(BidHistory bidHistory) {
+
+        logger.info("Project {}", bidHistory.getProjectId());
+
+        bidHistory.reduceByInterestRate().entrySet()
+                .stream()
+                .map(entry -> Tuple.of(entry.getKey(), entry.getValue()))
+                .sorted(this::sort)
+                .collect(AmountSummarizer::new, AmountSummarizer::accept, AmountSummarizer::combine)
+                .stream()
+                .forEach((entry) -> logger.info("{}%-{}€---{}€", entry.get(0), entry.get(1), entry.get(2)));
+
+        logger.info("----------------");
     }
 
+    private int sort(Tuple left, Tuple right) {
+        Float leftF = Float.parseFloat((String) left.get(0));
+        Float rightF = Float.parseFloat((String) right.get(0));
+        return Float.compare(leftF, rightF);
+    }
 
     private String toJSON(Object bid) {
         try {

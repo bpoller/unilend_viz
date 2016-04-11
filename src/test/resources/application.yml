@@ -1,0 +1,3 @@
+mongo:
+  connectionurl: mongodb://bert:toto@ds019970.mlab.com:19970/unilendtest
+  dbname: unilendtest

@@ -1,19 +1,13 @@
 package io.bpoller.unilend.service;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializationFeature;
-import io.bpoller.unilend.model.Bid;
 import io.bpoller.unilend.model.BidHistory;
 import org.junit.Before;
 import org.junit.Test;
-import org.mockito.Mock;
-import org.reactivestreams.Publisher;
-import org.reactivestreams.Subscriber;
 import org.slf4j.Logger;
+import reactor.core.publisher.Flux;
+import reactor.core.tuple.Tuple;
 
 import java.io.IOException;
-import java.util.Map;
 
 import static org.mockito.MockitoAnnotations.initMocks;
 import static org.slf4j.LoggerFactory.getLogger;
@@ -22,47 +16,37 @@ public class BidHistoryRetrieverTest {
 
     private Logger logger = getLogger(getClass());
 
-    @Mock
-    private Publisher<String> publisher;
-
-    @Mock
-    private Subscriber<BidHistory> subscriber;
-
     private BidHistoryRetriever bidHistoryRetriever;
-
-    private ObjectMapper objectMapper;
 
     @Before
     public void init() {
-        this.objectMapper = new ObjectMapper();
-        objectMapper.configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false);
         initMocks(this);
-        bidHistoryRetriever = new BidHistoryRetriever(publisher, subscriber);
+        bidHistoryRetriever = new BidHistoryRetriever();
     }
 
     @Test
     public void shouldRetrieveIds() throws IOException, InterruptedException {
-        Map<String, Integer> histoValues = bidHistoryRetriever.retrieveHistory("28802").reduceByInterestRate();
 
-        histoValues.entrySet()
-                .stream()
-                .sorted(this::sort)
-                .forEach((entry)->logger.info("{}%-{}€", entry.getKey(), entry.getValue()));
+        long t = System.currentTimeMillis();
+
+        Flux
+                .from(bidHistoryRetriever.retrieveHistory("30559"))
+                .map(bidHisto -> {
+                    logger.info("Request Delay : {}", System.currentTimeMillis() - t);
+                    return bidHisto.reduceByInterestRate();
+                })
+                .consume(histoValues -> histoValues.entrySet()
+                        .stream()
+                        .map(entry -> Tuple.of(entry.getKey(), entry.getValue()))
+                        .sorted(this::sort)
+                        .collect(AmountSummarizer::new, AmountSummarizer::accept, AmountSummarizer::combine)
+                        .stream()
+                        .forEach((entry) -> logger.info("{}%-{}€---{}€", entry.get(0), entry.get(1), entry.get(2))));
     }
 
-    private int sort(Map.Entry<String, Integer> left, Map.Entry<String, Integer> right) {
-        Float leftF = Float.parseFloat(left.getKey());
-        Float rightF = Float.parseFloat(right.getKey());
+    private int sort(Tuple left, Tuple right) {
+        Float leftF = Float.parseFloat((String) left.get(0));
+        Float rightF = Float.parseFloat((String) right.get(0));
         return Float.compare(leftF, rightF);
-    }
-
-
-    private String toJSON(Object bid) {
-        try {
-            return objectMapper.writeValueAsString(bid);
-        } catch (JsonProcessingException e) {
-            e.printStackTrace();
-            return "error";
-        }
     }
 }

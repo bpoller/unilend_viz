@@ -4,7 +4,6 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mongodb.reactivestreams.client.MongoCollection;
 import com.mongodb.reactivestreams.client.MongoDatabase;
-import com.mongodb.reactivestreams.client.Success;
 import io.bpoller.unilend.eventstore.Eventstore;
 import io.bpoller.unilend.model.project.ProjectEvent;
 import org.bson.Document;
@@ -48,16 +47,14 @@ public class ProjectEventStore implements Eventstore<String, ProjectEvent> {
                 })
                 .map(Document::parse)
                 .flatMap(collection::insertOne)
-                .map(s-> event)
-
+                .map(s -> event)
                 .flatMap(this::sendToTopic)
                 .after();
     }
 
     private Publisher<Void> sendToTopic(ProjectEvent projectEvent) {
-        logger.info("I gotta push this into the topic now");
-        topic.onNext(projectEvent);
-        return Mono.empty().after();
+        Mono.just(projectEvent).subscribe(topic);
+        return Mono.empty();
     }
 
 

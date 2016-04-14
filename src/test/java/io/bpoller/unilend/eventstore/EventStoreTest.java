@@ -17,7 +17,6 @@ import reactor.core.publisher.Flux;
 import reactor.core.test.TestSubscriber;
 
 import java.time.Duration;
-import java.time.temporal.TemporalUnit;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @SpringApplicationConfiguration(classes = {TestAppConfig.class, AppConfiguration.class})
@@ -29,30 +28,32 @@ public class EventStoreTest {
     @Autowired
     MongoDatabase db;
 
-
     @Before
     public void init() {
 
-        TestSubscriber ts = new TestSubscriber<Success>();
+        TestSubscriber<Success> ts = new TestSubscriber<>();
 
         ts.bindTo(Flux
-                .from(db.getCollection("ProjectEvents").drop())).await(Duration.ofSeconds(3));
+                .from(db.getCollection("ProjectEvents").drop())).await(Duration.ofSeconds(6));
     }
 
     @Test
     public void shouldCorrectlyStoreEventAndPublish() {
-
         ProjectCreatedEvent event = new ProjectCreatedEvent("123");
         TestSubscriber<Void> ts = new TestSubscriber<>();
+
+        TestSubscriber<ProjectEvent> topicSubscriber = new TestSubscriber<>();
+        projectEventStore.subscribe(topicSubscriber);
 
         ts.bindTo(projectEventStore.store(event))
                 .await(Duration.ofSeconds(5))
                 .assertComplete();
+
+        topicSubscriber.awaitAndAssertNextValuesWith(System.out::println);
     }
 
     @Test
     public void shouldPreventPublishingAnAlreadyStoredEvent() {
 
     }
-
 }
